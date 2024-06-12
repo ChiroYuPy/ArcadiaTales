@@ -66,7 +66,7 @@ We welcome contributions from the community! If you'd like to contribute to Arca
 1. **Fork the Repository:** Click on the "Fork" button at the top of the repository page.
 2. **Clone Your Fork:** 
     ```bash
-    git clone https://github.com/yourusername/arcadia-tales.git
+    git clone https://github.com/ChiroYuPy/ArcadiaTales
     ```
 3. **Create a Branch:**
     ```bash
