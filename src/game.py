@@ -44,6 +44,7 @@ class Game:
                     self.handle_key_event(event)
                 case pygame.VIDEORESIZE:
                     self.handle_resize_event(event)
+            self.level.handle_events(event)
 
     def handle_key_event(self, event):
         if self.config.Chat.chat_open:
@@ -51,6 +52,8 @@ class Game:
         match event.key:
             case pygame.K_t:
                 self.hande_t_key()
+            case pygame.K_e:
+                self.config.show_player_inventory = not self.config.show_player_inventory
             case pygame.K_ESCAPE:
                 self.handle_escape_key()
             case pygame.K_F3:

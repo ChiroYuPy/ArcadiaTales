@@ -4,6 +4,7 @@ from pygame.key import get_pressed
 
 from src.config.game_data import GameData
 from src.entities.animated_entity import AnimatedEntity
+from src.guis.inventory import Inventory
 
 
 class Player(AnimatedEntity):
@@ -25,6 +26,8 @@ class Player(AnimatedEntity):
         self.animation_direction = "down"
         self.speed = self.config.player_speed
         self.import_assets(scale=self.config.tile_scale)
+
+        self.inventory = Inventory(8, 8)
 
     def input(self):
         keys = get_pressed()

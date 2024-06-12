@@ -2,6 +2,7 @@ from enum import Enum
 
 
 class Color:
+    TRANSPARENT = (0, 0, 0, 0)
     BLACK = (0, 0, 0)
     DARK_BLUE = (0, 0, 170)
     DARK_GREEN = (0, 170, 0)

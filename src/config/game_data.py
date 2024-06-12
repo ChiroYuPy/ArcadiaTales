@@ -19,10 +19,25 @@ class GameData:
 
     map_size = 50
 
+    show_player_inventory: bool = False  # Whether to show the player's inventory
     player_speed: int = 100  # Speed of the player
     player_name: str = "&eChiroYuki"  # Name of the player
+    player_health: int = 100  # Health of the player
+    player_max_health: int = 100  # Maximum health of the player
+    player_attack_damage: int = 10  # Attack damage of the player
+    player_inventory_slot_width: int = 6  # Width of the player's inventory
+    player_inventory_slot_height: int = 12  # Height of the player's inventory
+    player_inventory_slot_size: int = 16  # Size of the player's inventory slots
+    player_inventory_slot_spacing: int = 2  # Spacing between player's inventory slots
+    player_inventory_slot_image: str = "assets/images/gui/slot.png"  # Image for player's inventory slots
+    player_inventory_slot_scale: float = 4  # Scale of the player's inventory slots
 
     slime_speed: int = 50  # Speed of the slime enemy
+    slime_health: int = 20  # Health of the slime enemy
+    slime_max_health: int = 20  # Maximum health of the slime enemy
+    slime_attack_damage: int = 5  # Attack damage of the slime enemy
+    slime_spawn_rate: int = 5  # Rate at which slimes spawn
+    slime_spawn_max: int = 10  # Maximum number of slimes to spawn
 
     class Chat:
         """Nested class for chat configuration."""

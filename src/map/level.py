@@ -4,6 +4,7 @@ from pyqtree import Index
 from src.config.game_data import GameData
 from src.entities.enemies.slime import Slime
 from src.entities.player import Player
+from src.guis.graphical_user_interface import InventoryUI
 from src.map.camera import Camera
 from src.map.mini_map import MiniMap
 from src.map.tile_map import NoiseTileMapGenerator
@@ -20,6 +21,7 @@ class Level:
         self.display_surface = pygame.display.get_surface()
         self.all_sprites = Camera()
         self.player = Player(group=self.all_sprites, pos=(-6, -16))
+        self.inventory_ui = InventoryUI(self.player.inventory)
         self.enemies = [Slime(group=self.all_sprites, pos=(x * 2, 0)) for x in range(10)]
         names = ("&4Gertrude", "&cGerald", "&7Geraldine", "&8Geraldina", "&5Geraldino", "&9Geraldinio")
         for x, slime in enumerate(self.enemies):
@@ -98,6 +100,8 @@ class Level:
     def draw(self) -> None:
         self.draw_map()
         self.all_sprites.shifted_draw(self.player)
+        if self.config.show_player_inventory:
+            self.inventory_ui.draw()
         # self.mini_map.draw()
 
     def update(self, dt) -> None:
@@ -108,6 +112,9 @@ class Level:
             enemy.update(dt)
             self.check_tile_collision(enemy)
             self.check_collision(enemy)
+
+    def handle_events(self, event) -> None:
+        self.inventory_ui.handle_events(event)
 
     def get_tile_position(self, pixel_position):
         tile_x = pixel_position[0] // self.config.tile_size
