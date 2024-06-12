@@ -40,9 +40,10 @@ class NoiseTileMapGenerator:
     def generate_tiles_map(self, origin_x, origin_y, w, h):
         self.tiles_map = {}
 
-        for y in range(int(origin_y - h), int(origin_y + h)):
-            for x in range(int(origin_x - w), int(origin_x + w)):
-                tile = self.generate_tile(x, y)
-                self.tiles_map[(x, y)] = tile
+        if not self.tiles_map:
+            for y in range(int(origin_y - h), int(origin_y + h)):
+                for x in range(int(origin_x - w), int(origin_x + w)):
+                    tile = self.generate_tile(x, y)
+                    self.tiles_map[(x, y)] = tile
 
         return self.tiles_map

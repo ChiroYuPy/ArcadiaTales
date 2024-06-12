@@ -1,10 +1,14 @@
+import random
+
 import pygame
+from pygame.sprite import LayeredUpdates
 from pyqtree import Index
 from src.config.gamedata import GameData
 from src.entities.enemies.slime import Slime
 from src.entities.player import Player
 from src.map.camera import Camera
 from src.map.tilemap import NoiseTileMapGenerator
+from src.utils.colors import Color
 from src.utils.utils import Direction
 
 
@@ -17,18 +21,19 @@ class Level:
         self.all_sprites = Camera()
         self.player = Player(group=self.all_sprites, pos=(0, 0))
         self.enemies = [Slime(group=self.all_sprites, pos=(x * 2, 0)) for x in range(10)]
-        for slime in self.enemies:
+        names = ("&4Gertrude", "&cGerald", "&7Geraldine", "&8Geraldina", "&5Geraldino", "&9Geraldinio")
+        for x, slime in enumerate(self.enemies):
             slime.target = self.player
+            slime.name = names[x % len(names)]
 
         bbox = (0, 0, self.config.window_width, self.config.window_height)
         self.quadtree = Index(bbox=bbox)
         self.quadtree_items = set()
 
-        self.player.rect = pygame.Rect(0, 0, 32, 32)
-        self.quadtree.insert(item=self.player, bbox=self.player.rect)
+        self.quadtree.insert(item=self.player, bbox=self.player.collide_rect)
 
         for enemy in self.enemies:
-            self.quadtree.insert(item=enemy, bbox=(-2, -2, 2, 2))
+            self.quadtree.insert(item=enemy, bbox=enemy.collide_rect)
 
         self.tile_map_generator = NoiseTileMapGenerator()
         self.load_tile_images()
@@ -73,13 +78,13 @@ class Level:
                 tile_y = (y * self.config.tile_size + self.config.tile_size / 2) - self.player.pos.y + self.config.window_height // 2
                 self.display_surface.blit(tile_image, (tile_x, tile_y))
                 if self.config.debug_level == 3 or self.config.debug_level == 4:
-                    pygame.draw.rect(self.display_surface, (255, 0, 0),
+                    pygame.draw.rect(self.display_surface, Color.DARK_BLUE,
                                      (tile_x,
                                       tile_y,
                                       self.config.tile_size,
                                       self.config.tile_size), 1)
             else:
-                pygame.draw.rect(self.display_surface, (255, 127, 160),
+                pygame.draw.rect(self.display_surface, Color.BLACK,
                                  (x * self.config.tile_size, y * self.config.tile_size, self.config.tile_size,
                                   self.config.tile_size))
 
@@ -90,19 +95,23 @@ class Level:
     def update(self, dt) -> None:
         self.player.update(dt)
         self.check_tile_collision(self.player)
-        for enemy in self.enemies:
-            enemy.update(dt)
-
         self.check_collision(self.player)
         for enemy in self.enemies:
+            enemy.update(dt)
+            self.check_tile_collision(enemy)
             self.check_collision(enemy)
+
+    def get_tile_position(self, pixel_position):
+        tile_x = pixel_position[0] // self.config.tile_size
+        tile_y = pixel_position[1] // self.config.tile_size
+        return tile_x, tile_y
 
     def check_tile_collision(self, entity):
         entity_rect = entity.collide_rect
         for (x, y), tile in self.tile_map_generator.tiles_map.items():
             if tile.tile_id == 2:
-                tile_rect = pygame.Rect(x * self.config.tile_size + 16,
-                                        y * self.config.tile_size + 16,
+                tile_rect = pygame.Rect(x * self.config.tile_size + self.config.tile_size / 2,
+                                        y * self.config.tile_size + self.config.tile_size / 2,
                                         self.config.tile_size,
                                         self.config.tile_size)
                 if entity_rect.colliderect(tile_rect):
@@ -124,9 +133,11 @@ class Level:
 
     def handle_collision(self, entity1, entity2) -> None:
         if isinstance(entity1, Player) and isinstance(entity2, Slime):
-            self.remove_entity(entity2)
+            # self.remove_entity(entity2)
+            pass
         elif isinstance(entity2, Player) and isinstance(entity1, Slime):
-            self.remove_entity(entity1)
+            # self.remove_entity(entity1)
+            pass
         elif isinstance(entity1, Slime) and isinstance(entity2, Slime):
             # Calculate distance between centers
             dx = entity1.pos.x - entity2.pos.x
@@ -136,14 +147,15 @@ class Level:
 
             if distance_squared < min_distance_squared:
                 distance = distance_squared ** 0.5
-                overlap = (entity1.width / 2 + entity2.width / 2) - distance
-                if overlap > 0:
-                    overlap_dx = (dx / distance) * overlap
-                    overlap_dy = (dy / distance) * overlap
-                    entity1.pos.x += overlap_dx
-                    entity1.pos.y += overlap_dy
-                    entity2.pos.x -= overlap_dx
-                    entity2.pos.y -= overlap_dy
+                if distance != 0:
+                    overlap = (entity1.width / 2 + entity2.width / 2) - distance
+                    if overlap > 0:
+                        overlap_dx = (dx / distance) * overlap
+                        overlap_dy = (dy / distance) * overlap
+                        entity1.pos.x += overlap_dx
+                        entity1.pos.y += overlap_dy
+                        entity2.pos.x -= overlap_dx
+                        entity2.pos.y -= overlap_dy
 
     def add_entity(self, entity) -> None:
         self.quadtree.insert(item=entity, bbox=entity.collide_rect)

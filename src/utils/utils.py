@@ -1,6 +1,7 @@
 from enum import Enum
-from os import walk
+from os import walk, path, makedirs
 from typing import List, Tuple
+from PIL import Image
 
 import pygame
 from pygame import Vector2
@@ -61,7 +62,6 @@ def format_text(line: str) -> List[Tuple[str, Tuple[int, int, int]]]:
 def draw_formatted_message(font, surface, formatted_message, pos):
     x, y = pos
     for text, color in formatted_message:
-        print(color)
         font.render_to(surface, (x, y), text, color)
         x += font.get_rect(text)[2]
 

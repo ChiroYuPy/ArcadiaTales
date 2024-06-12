@@ -1,3 +1,5 @@
+import random
+
 from src.config.gamedata import GameData
 from src.entities.enemies.enemy import Enemy
 
@@ -5,15 +7,16 @@ from src.entities.enemies.enemy import Enemy
 class Slime(Enemy):
     def __init__(self, group, pos):
         self.config = GameData()
-
         super().__init__(group=group,
                          pos=pos,
                          animations={'up_walk': [], 'down_walk': [], 'left_walk': [], 'right_walk': [],
                                      'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
                                      'right_atk': [], 'left_atk': [], 'up_atk': [], 'down_atk': []},
-                         image_offset=(0, 0))
+                         image_offset=(0, 0),
+                         name_offset=(0, -12))
 
         self.name = "slime"
+        self.assets_folder = "slime"
         self.animation_state = "idle"
         self.animation_direction = "down"
         self.speed = self.config.slime_speed

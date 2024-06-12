@@ -13,8 +13,8 @@ class Entity(Sprite):
         self.config = GameData()
         super().__init__(group)
         self.pos = Vector2(pos) * self.config.tile_size
-        self.height = 32
-        self.width = 32
+        self.height = self.config.tile_size
+        self.width = self.config.tile_size
         self.collide_rect = self.get_collide_rect()
         self.direction = Vector2()
         self.speed = 100
@@ -31,7 +31,7 @@ class Entity(Sprite):
             self.pos.y = tile_rect.top - self.collide_rect.height / 2
 
     def get_collide_rect(self):
-        return pygame.rect.Rect(self.pos.x - self.width / 2, self.pos.y - self.height / 2, self.width, self.height)
+        return pygame.rect.Rect(self.pos.x - self.width / 2,self.pos.y - self.height / 2,self.width,self.height)
 
     def move(self, dt):
         if self.direction.magnitude() > 0:

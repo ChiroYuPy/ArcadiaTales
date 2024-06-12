@@ -4,11 +4,11 @@ window_frame: true
 window_resizable: true
 window_caption: "ArcadiaTales"
 game_version: "0.1.2"
-max_fps: 165
+max_fps: 800
 debug: false
-tile_scale: 2
+tile_scale: 4
 tile_image_size: 16
-tile_size: 32
+tile_size: 64
 player_speed: 100
 slime_speed: 50
 chat:

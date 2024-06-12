@@ -9,15 +9,18 @@ from src.entities.animatedentity import AnimatedEntity
 class Player(AnimatedEntity):
     def __init__(self, group, pos):
         self.config = GameData()
-
         super().__init__(group=group,
                          pos=pos,
                          animations={'up_walk': [], 'down_walk': [], 'left_walk': [], 'right_walk': [],
                                      'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
                                      'right_atk': [], 'left_atk': [], 'up_atk': [], 'down_atk': []},
-                         image_offset=(0, -20))
+                         image_offset=(0, - 10),
+                         name_offset=(0, - 16))
 
-        self.name = "player/1"
+        self.name = self.config.player_name
+        self.assets_name = "player"
+        self.current_skin = 1
+        self.assets_folder = "player" + "/" + str(self.current_skin)
         self.animation_state = "idle"
         self.animation_direction = "down"
         self.speed = self.config.player_speed
@@ -36,7 +39,6 @@ class Player(AnimatedEntity):
             self.direction = Vector2()
 
     def collide_with(self, tile_rect, direction):
-        print("Player collide with an tile")
         super().collide_with(tile_rect, direction)
 
     def update_animation_state(self):

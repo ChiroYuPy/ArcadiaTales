@@ -1,137 +1,125 @@
-from src.chat.chatcommands import CommandBase, CommandGroupBase, ChatBase
+from src.chat.chatcommands import Command, CommandGroup, Chat
+import traceback
 
 
-class Echo(CommandBase):
-    name = "echo"
-
-    @property
-    def tree(self):
-        return set()
-
-    @property
-    def help(self):
-        return """Example command, repeats the argument."""
-
-    def __call__(self, argument: str):  # When command is called by the user
-        self.chat.send_message(argument)
+# Adapters
 
 
-class Clear(CommandBase):
-    name = "clear"
-    help_message = """Clears the chat (returns an error if there is nothing to clear)."""
-
-    def __call__(self, argument: str):  # When command is called by the user
-        self.chat.game.clear_all_messages()
-
-
-class ChatCommands(CommandGroupBase):  # Creates a simple group of commands (subcommands)
-    name = "chat"  # Name of the group
-
-    @staticmethod
-    def create_commands(command_set):
-        # Initializes commands of the group (and returns them in a set)
-        return {
-            Echo(command_set),
-            Clear(command_set)
-        }
-
-
-class GodMode(CommandBase):
-    name = "godmode"
-
-    def load(self):  # Do some stuff... (sends a message on loading)
-        load_message = f"Loading {self.name}..."
-        self.chat.send_message(load_message)
-
-    def __call__(self, argument: str):  # When command is called by the user
-        self.chat.send_message(f"God mode activated")
-
-
-class Teleport(CommandBase):
-    name = "tp"
-
-    def load(self):  # Do some stuff... (sends a message on loading)
-        load_message = f"Loading {self.name}..."
-        self.chat.send_message(load_message)
-
-    def __call__(self, argument: str):  # When command is called by the user
-        arguments = argument.split()
-        if len(arguments) >= 3:
-            self.chat.send_message(f"teleporting to {argument}...")
-            target = arguments[0]
-            x = arguments[1]
-            y = arguments[2]
-
-            if target == "player":
-                self.chat.level.teleport_player((x, y))
-
-
-class GameCommands(CommandGroupBase):  # Creates a simple group of commands (subcommands)
-    name = "game"  # Name of the group
-
-    @staticmethod
-    def create_commands(command_set):
-        # Initializes commands of the group (and returns them in a set)
-        return {
-            GodMode(command_set),
-            Teleport(command_set)
-        }
-
-
-class List(CommandBase):
-    name = "list"
-
-    def load(self):
-        load_message = f"Loading {self.name}..."
-        self.chat.send_message(load_message)
-
-    def __call__(self, argument: str):
-        self.chat.send_message("&eList of commands available:")
-        for command in self.chat.tree:
-            self.chat.send_message(command)
-
-
-class HelpCommands(CommandGroupBase):
-    name = "help"
-
-    @staticmethod
-    def create_commands(command_set):
-
-        return {
-            List(command_set)
-        }
-
-
-class MyChat(ChatBase):
+class GameChat(Chat):
 
     def __init__(self):
         super().__init__()
+        self.core = None
         self.game = None
 
-    @staticmethod
-    def create_commands(command_set):
-        return {
-            ChatCommands(command_set),
-            GameCommands(command_set),
-            HelpCommands(command_set)
-        }
-
     @classmethod
-    def create_chat(cls, game):
-        chat = cls()
+    def create_chat(cls, core, game, chat=None):
+        if not chat:
+            chat = cls()
+        chat.add_core(core)
         chat.add_game(game)
 
         return super().create_chat(chat=chat)
 
-    def call_if_command(self, message) -> bool:
-        try:
-            return super().call_if_command(message)
-        except KeyError as e:
-            self.send_message(f"Unknown command: {e}")
-            return True
+    def log_user_mistake(self, error):
+        self.core.send_error_log(f"{error}.")
+
+    def log_error(self, error):
+        traceback.print_tb(error.__traceback__)
+        self.core.send_error_log("An unexpected error occurred.")
+
+    def add_core(self, core):
+        self.core = core
 
     def add_game(self, game):
         self.game = game
 
     def send_message(self, message):
-        self.game.show_message(message)
+        self.core.show_message(message)
+
+    def clear(self):
+        self.core.clear_all_messages()
+
+
+# Commands
+
+class Echo(Command):
+    name = "echo"
+
+    def __call__(self, argument: str):  # When command is called by the user
+        self.chat.send_message(argument)
+
+
+class Clear(Command):
+    name = "clear"
+    help_message = """Clears the chat (returns an error if there is nothing to clear)."""
+
+    def __call__(self, argument: str):
+        self.chat.clear()
+
+
+class GodMode(Command):
+    name = "god_mode"
+    _god_mode_state: bool
+
+    def load(self):
+        self._god_mode_state = False
+
+    def __call__(self, argument: str):
+        state = self._god_mode_state
+
+        message = "God mode deactivated" \
+            if state else "God mode activated"
+
+        self.chat.send_message(message)
+        self._god_mode_state = not state
+
+
+class Teleport(Command):
+    name = "tp"
+
+    def __call__(self, argument: str):
+        argument = argument.strip().split()
+        print(argument)
+        self.chat.send_message("Teleport...")
+
+
+# Command Groups
+
+class ChatCommands(CommandGroup):  # Creates a simple group of commands (subcommands)
+    name = "chat"  # Name of the group
+
+    @staticmethod
+    def create_commands():
+        # Initializes commands of the group (and returns them in a set)
+        return {
+            Echo,
+            Clear,
+        }
+
+
+class GameCommands(CommandGroup):
+    name = "game"
+
+    @staticmethod
+    def create_commands():
+        return {
+            GodMode,
+            Teleport,
+        }
+
+
+# Chats
+
+class Commands(GameChat):
+    @staticmethod
+    def create_commands():
+        return {
+            ChatCommands,
+            GameCommands,
+        }
+
+
+if __name__ == "__main__":
+    # TODO: Test chat
+    pass

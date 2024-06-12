@@ -1,5 +1,5 @@
 import pygame
-from pygame import Clock
+from pygame.time import Clock
 
 from src.config.gamedata import GameData
 from src.chat.chatcore import ChatCore
@@ -12,7 +12,7 @@ class Game:
     def __init__(self):
         self.running = True
         self.config = GameData()
-        self.config.load_config()
+
         self.display_surface = pygame.display.set_mode(
             (self.config.window_width, self.config.window_height),
             pygame.NOFRAME if not self.config.window_frame else False | pygame.RESIZABLE if self.config.window_resizable else False)
@@ -20,7 +20,7 @@ class Game:
         self.clock = Clock()
         self.level = Level(self, self.clock)
         self.overlay = Overlay(self)
-        self.chat = ChatCore()
+        self.chat = ChatCore(self)
         self.chat_ui = ChatUI(self.chat)
         self.startup()
 
@@ -60,7 +60,7 @@ class Game:
                         self.config.debug_level = 0
 
     def quit_game(self):
-        self.config.save_config()
+
         self.running = False
 
     def update(self):
@@ -72,7 +72,6 @@ class Game:
         self.display_surface.fill((32, 0, 0))
         self.draw()
         pygame.display.flip()
-        self.clock.tick(600)
 
     def draw(self):
         self.level.draw()
