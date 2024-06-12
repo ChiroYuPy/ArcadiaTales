@@ -14,18 +14,17 @@ class AnimatedEntity(Entity):
         self.current_time = 0
         self.animation_speed = 1
         self.image_offset = Vector2(image_offset)
-        self.name = "animated_entity"
 
     def import_assets(self, scale=1):
         for animation in self.animations.keys():
-            full_path = f'assets/images/entities/{self.name}/' + animation
+            full_path = 'assets/images/character/' + animation
             animation_images = import_folder(full_path)
             for index, image in enumerate(animation_images):
-                scaled_width = int(image.get_width() * scale)
-                scaled_height = int(image.get_height() * scale)
-                animation_images[index] = pygame.transform.scale(image, (scaled_width, scaled_height))
+                cropped_image = image.subsurface((0, 16, 48, 32))
+                scaled_width = int(cropped_image.get_width() * scale)
+                scaled_height = int(cropped_image.get_height() * scale)
+                animation_images[index] = pygame.transform.scale(cropped_image, (scaled_width, scaled_height))
             self.animations[animation] = animation_images
-        self.image = self.animations[self.current_animation][int(self.current_frame)]
 
     def animate(self, dt):
         self.current_frame += self.animation_speed * dt

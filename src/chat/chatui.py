@@ -55,8 +55,7 @@ class ChatUI:
                     self.input_text = self.input_text[:self.cursor_pos] + self.input_text[self.cursor_pos + 1:]
             elif event.unicode in allowed_characters:
                 if len(self.input_text) < self.config.Chat.max_input_characters:
-                    self.input_text = self.input_text[:self.cursor_pos] + event.unicode + self.input_text[
-                                                                                          self.cursor_pos:]
+                    self.input_text = self.input_text[:self.cursor_pos] + event.unicode + self.input_text[self.cursor_pos:]
                     self.cursor_pos += 1
 
             self.update_surfaces()  # Ensure surfaces are updated on each input change
@@ -86,9 +85,9 @@ class ChatUI:
         recent_messages = self.chat.get_messages()[-self.config.Chat.max_shown_messages:]
 
         for message in reversed(recent_messages):
-            message_surface = pygame.Surface((self.config.Chat.width, self.config.Chat.font_size*0.6), pygame.SRCALPHA)
+            message_surface = pygame.Surface((self.config.Chat.width, self.config.Chat.font_size), pygame.SRCALPHA)
             message_surface.fill((30, 30, 30, 127))
-            draw_formatted_message(self.chat_font, message_surface, format_text(message), (0, 0))
+            draw_formatted_message(self.chat_font, message_surface, format_text(message), (5, 5))
             self.chat_surfaces.append(message_surface)
 
         # Update input surface width based on input text width
@@ -106,7 +105,7 @@ class ChatUI:
 
         # Update completer surface
         completer_surface_height = self.config.Chat.font_size * len(completer_texts)
-        completer_surface = pygame.Surface((80, completer_surface_height), pygame.SRCALPHA)
+        completer_surface = pygame.Surface((200, completer_surface_height), pygame.SRCALPHA)
         completer_surface.fill((32, 32, 32, 127))
         y_offset = completer_surface_height - self.config.Chat.font_size  # Commencer depuis le bas
         for text in completer_texts:
@@ -125,25 +124,8 @@ class ChatUI:
             self.screen.blit(self.input_surface, (x, y))
 
         if self.completer_surface and self.config.Chat.chat_open:
-            x += self.input_surface.get_width() - 6
+            x += self.input_surface.get_width()
             self.screen.blit(self.completer_surface, (x, y - self.completer_surface.get_height()))
 
     def update_completer(self):
-        text = self.input_text
-        tree = self.chat.chat.tree
-
-        if not text.startswith("/"):
-            return ()
-
-        word = current_text = text[1:]
-        leaf = tree.copy()
-        argument = None
-
-        while " " in current_text:
-            word, argument = current_text.split(" ", 1)
-            current_text = argument
-            if word not in leaf:
-                break
-            leaf = leaf[word]
-
-        return tuple(filter(lambda x: x.startswith(current_text), leaf))
+        return  set(self.chat.commands.complete(self.input_text))
