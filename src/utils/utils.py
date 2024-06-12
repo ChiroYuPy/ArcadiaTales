@@ -53,7 +53,7 @@ def draw_formatted_message(font, surface, formatted_message, pos):
     x, y = pos
     for text, color in formatted_message:
         font.render_to(surface, (x, y), text, color)
-        x += font.get_rect(text)[2] + 5
+        x += font.get_rect(text)[2]
 
 
 def import_folder(path):

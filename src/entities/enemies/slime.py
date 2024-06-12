@@ -1,7 +1,3 @@
-import pygame
-from pygame import Vector2
-from pygame.key import get_pressed
-
 from gamedata import GameData
 from src.entities.enemies.enemy import Enemy
 
@@ -15,15 +11,20 @@ class Slime(Enemy):
                          animations={'up_walk': [], 'down_walk': [], 'left_walk': [], 'right_walk': [],
                                      'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
                                      'right_atk': [], 'left_atk': [], 'up_atk': [], 'down_atk': []},
-                         image_offset=(0, -4))
-        self.import_assets(scale=self.config.tile_scale)
+                         image_offset=(0, 0))
 
+        self.name = "slime"
         self.animation_state = "idle"
         self.animation_direction = "down"
         self.speed = self.config.slime_speed
+        self.import_assets(scale=self.config.tile_scale)
 
     def update_animation_state(self):
-        self.animation_direction = "down"
+        self.animation_direction = "right" if self.direction.x > 0 else \
+            "left" if self.direction.x < 0 else \
+                "down" if self.direction.y > 0 else \
+                    "up" if self.direction.y < 0 else (
+                        self.animation_direction)
         if self.direction.magnitude() == 0:
             self.animation_state = "idle"
             self.animation_speed = 4

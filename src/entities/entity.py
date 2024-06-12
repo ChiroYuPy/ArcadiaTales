@@ -15,6 +15,7 @@ class Entity(Sprite):
         self.collide_rect = self.get_collide_rect()
         self.direction = Vector2()
         self.speed = 100
+        self.name = "entity"
 
     def get_collide_rect(self):
         return pygame.rect.Rect(self.pos.x - self.width / 2, self.pos.y - self.height / 2, self.width, self.height)

@@ -5,9 +5,9 @@ from src.chat.commands import MyChat
 
 
 class ErrorLevel(Enum):
-    INFO = "&7"      # Informative message
-    WARNING = "&e"   # Warning message
-    ERROR = "&c"     # Error message
+    INFO = "&7"  # Informative message
+    WARNING = "&e"  # Warning message
+    ERROR = "&c"  # Error message
     CRITICAL = "&4"  # Critical message
 
 

@@ -47,6 +47,25 @@ class GodMode(CommandBase):
         self.chat.send_message(f"God mode activated")
 
 
+class Teleport(CommandBase):
+    name = "tp"
+
+    def load(self):  # Do some stuff... (sends a message on loading)
+        load_message = f"Loading {self.name}..."
+        self.chat.send_message(load_message)
+
+    def __call__(self, argument: str):  # When command is called by the user
+        arguments = argument.split()
+        if len(arguments) >= 3:
+            self.chat.send_message(f"teleporting to {argument}...")
+            target = arguments[0]
+            x = arguments[1]
+            y = arguments[2]
+
+            if target == "player":
+                self.chat.level.teleport_player((x, y))
+
+
 class GameCommands(CommandGroupBase):  # Creates a simple group of commands (subcommands)
     name = "game"  # Name of the group
 
@@ -55,6 +74,31 @@ class GameCommands(CommandGroupBase):  # Creates a simple group of commands (sub
         # Initializes commands of the group (and returns them in a set)
         return {
             GodMode(command_set),
+            Teleport(command_set)
+        }
+
+
+class List(CommandBase):
+    name = "list"
+
+    def load(self):
+        load_message = f"Loading {self.name}..."
+        self.chat.send_message(load_message)
+
+    def __call__(self, argument: str):
+        self.chat.send_message("&eList of commands available:")
+        for command in self.chat.tree:
+            self.chat.send_message(command)
+
+
+class HelpCommands(CommandGroupBase):
+    name = "help"
+
+    @staticmethod
+    def create_commands(command_set):
+
+        return {
+            List(command_set)
         }
 
 
@@ -68,7 +112,8 @@ class MyChat(ChatBase):
     def create_commands(command_set):
         return {
             ChatCommands(command_set),
-            GameCommands(command_set)
+            GameCommands(command_set),
+            HelpCommands(command_set)
         }
 
     @classmethod
