@@ -1,6 +1,7 @@
 import random
 
 import pygame
+from pygame import Vector2
 from pygame.sprite import LayeredUpdates
 from pyqtree import Index
 from src.config.gamedata import GameData
@@ -19,7 +20,7 @@ class Level:
         self.config = GameData()
         self.display_surface = pygame.display.get_surface()
         self.all_sprites = Camera()
-        self.player = Player(group=self.all_sprites, pos=(0, 0))
+        self.player = Player(group=self.all_sprites, pos=(-6, -16))
         self.enemies = [Slime(group=self.all_sprites, pos=(x * 2, 0)) for x in range(10)]
         names = ("&4Gertrude", "&cGerald", "&7Geraldine", "&8Geraldina", "&5Geraldino", "&9Geraldinio")
         for x, slime in enumerate(self.enemies):
@@ -104,7 +105,7 @@ class Level:
     def get_tile_position(self, pixel_position):
         tile_x = pixel_position[0] // self.config.tile_size
         tile_y = pixel_position[1] // self.config.tile_size
-        return tile_x, tile_y
+        return Vector2(tile_x, tile_y)
 
     def check_tile_collision(self, entity):
         entity_rect = entity.collide_rect

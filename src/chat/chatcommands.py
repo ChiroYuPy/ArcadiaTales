@@ -209,7 +209,7 @@ class CommandSetBase:
     def call_command(self, command_name: str, argument: str):
         if not (not command_name or command_name in self.commands):
             raise UserMistake(f"This command does not exist : {command_name}")
-        self.commands[command_name](argument)
+        self.commands[command_name].trigger(argument)
 
 
 class SubCommandSetBase(CommandSetBase):
@@ -266,9 +266,6 @@ class Command:
             raise NotImplementedError("This command has no name or is the parent class")
 
     def __call__(self, argument: str):
-        if argument.strip(" ") == "help":
-            self.chat.send_message(self.help)
-            return
         raise NotImplementedError(
             "You should override this method"
         )
@@ -314,6 +311,12 @@ class Command:
     def load(self):
         load_message = f"Loading {self.name}..."
         self.chat.send_message(load_message)  # Do some stuff... (sends a message on loading)
+
+    def trigger(self, argument: str):
+        if not "help" in self.tree and argument.strip(" ") == "help":
+            self.chat.send_message(self.help)
+            return
+        return self(argument)
 
 
 class CommandGroup(Command, CommandManager):
@@ -486,6 +489,8 @@ def test():
         "basic test message",
         "/chat echo this is a test for echo",
         "/chat",
+        "/chat help",
+        "/chat clear help",
         "/I_Dont_Exist",
         "/mock error",
         "/mock full_name",
@@ -499,6 +504,10 @@ def test():
         mychat.receive_message(mock_message)
 
     print("\n----- Ending Tests -----\n\n")
+
+    import os
+    while True:
+        os.system(input("$ "))
 
     while True:
         mychat.receive_message(input('$ '))

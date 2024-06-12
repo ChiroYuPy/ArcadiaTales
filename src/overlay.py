@@ -15,9 +15,11 @@ class Overlay:
         self.texts = []
 
     def update_texts(self):
+        player_pixel_pos = self.game.level.player.pos
+        player_tile_pos = self.game.level.get_tile_position(self.game.level.player.pos)
         self.texts = [
-            f'Player Pixel Position: ({int(self.game.level.player.pos.x)}, {int(self.game.level.player.pos.y)})',
-            f'Player Tile Position: ({int(self.game.level.player.pos.x)}, {int(self.game.level.player.pos.y)})',
+            f'Player Pixel Position: ({int(player_pixel_pos.x)}, {int(player_pixel_pos.y)})',
+            f'Player Tile Position: ({int(player_tile_pos.x)}, {int(player_tile_pos.y)})',
             f'FPS: {int(self.clock.get_fps())}',
             f'Config Debug Level: {self.config.debug_level}',
             f'Config Player Speed: {self.config.player_speed}',

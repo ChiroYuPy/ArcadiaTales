@@ -78,10 +78,31 @@ class GodMode(Command):
 class Teleport(Command):
     name = "tp"
 
+    @staticmethod
+    def _is_int(n: str):
+        if n.startswith("-"):
+            n = n[1:]
+        return n.isdigit()
+
     def __call__(self, argument: str):
         argument = argument.strip().split()
-        print(argument)
-        self.chat.send_message("Teleport...")
+
+        if len(argument) != 2:
+            self.chat.send_message("Please provide both x and y coordinates.")
+            return
+
+        if not all(self._is_int(n) for n in argument):
+            self.chat.send_message("Invalid coordinates.")
+            return
+
+        x, y = map(int, argument)
+
+        print(x, y)
+
+        self.chat.game.level.player.pos.x = x * self.chat.game.config.tile_size
+        self.chat.game.level.player.pos.y = y * self.chat.game.config.tile_size
+
+        self.chat.send_message(f"Teleported to ({x}, {y}).")
 
 
 # Command Groups
