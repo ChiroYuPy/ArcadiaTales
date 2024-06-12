@@ -37,30 +37,46 @@ class Game:
 
     def handle_events(self):
         for event in pygame.event.get():
-            # TODO: Do you know match / case ? You should split thins function into smaller pieces
-            if event.type == pygame.QUIT:
-                self.quit_game()
-            elif event.type == pygame.VIDEORESIZE:
-                self.config.window_width, self.config.window_height = event.size
-                self.display_surface = pygame.display.set_mode(event.size, pygame.RESIZABLE)
-                pygame.display.update()
-            elif event.type == pygame.KEYDOWN:
-                if self.config.Chat.chat_open:
-                    self.chat_ui.handle_event(event)
-                if event.key == pygame.K_t and not self.config.Chat.chat_open:
-                    self.config.Chat.chat_open = True
-                if event.key == pygame.K_ESCAPE:
-                    if self.config.Chat.chat_open:
-                        self.config.Chat.chat_open = False
-                    else:
-                        self.quit_game()
-                if event.key == pygame.K_F3:
-                    self.config.debug_level += 1
-                    if self.config.debug_level > 4:
-                        self.config.debug_level = 0
+            match event.type:
+                case pygame.QUIT:
+                    self.quit_game()
+                case pygame.KEYDOWN:
+                    self.handle_key_event(event)
+                case pygame.VIDEORESIZE:
+                    self.handle_resize_event(event)
+
+    def handle_key_event(self, event):
+        if self.config.Chat.chat_open:
+            self.chat_ui.handle_event(event)
+        match event.key:
+            case pygame.K_t:
+                self.hande_t_key()
+            case pygame.K_ESCAPE:
+                self.handle_escape_key()
+            case pygame.K_F3:
+                self.handle_f3_key()
+
+    def hande_t_key(self):
+        if not self.config.Chat.chat_open:
+            self.config.Chat.chat_open = True
+
+    def handle_escape_key(self):
+        if self.config.Chat.chat_open:
+            self.config.Chat.chat_open = False
+        else:
+            self.quit_game()
+
+    def handle_f3_key(self):
+        self.config.debug_level += 1
+        if self.config.debug_level > 4:
+            self.config.debug_level = 0
+
+    def handle_resize_event(self, event):
+        self.config.window_width, self.config.window_height = event.size
+        self.display_surface = pygame.display.set_mode(event.size, pygame.RESIZABLE)
+        pygame.display.update()
 
     def quit_game(self):
-
         self.running = False
 
     def update(self):
@@ -69,9 +85,9 @@ class Game:
         self.overlay.update_texts()
 
     def render(self):
-        self.display_surface.fill((32, 0, 0))
+        self.display_surface.fill((0, 0, 0))
         self.draw()
-        pygame.display.flip()
+        pygame.display.update()
 
     def draw(self):
         self.level.draw()

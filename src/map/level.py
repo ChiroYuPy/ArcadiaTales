@@ -1,13 +1,11 @@
-import random
-
 import pygame
 from pygame import Vector2
-from pygame.sprite import LayeredUpdates
 from pyqtree import Index
 from src.config.gamedata import GameData
 from src.entities.enemies.slime import Slime
 from src.entities.player import Player
 from src.map.camera import Camera
+from src.map.minimap import MiniMap
 from src.map.tilemap import NoiseTileMapGenerator
 from src.utils.colors import Color
 from src.utils.utils import Direction
@@ -15,6 +13,7 @@ from src.utils.utils import Direction
 
 class Level:
     def __init__(self, game, clock) -> None:
+        self.tile_images = []
         self.game = game
         self.clock = clock
         self.config = GameData()
@@ -36,15 +35,24 @@ class Level:
         for enemy in self.enemies:
             self.quadtree.insert(item=enemy, bbox=enemy.collide_rect)
 
-        self.tile_map_generator = NoiseTileMapGenerator()
+        self.tile_map_generator = NoiseTileMapGenerator(self)
+        self.tiles_map = self.tile_map_generator.generate_tiles_map(
+            0,
+            0,
+            self.config.map_size,
+            self.config.map_size)
         self.load_tile_images()
+
+        self.mini_map = MiniMap(tiles_map=self.tiles_map,
+                                mini_map_size=20,
+                                display_surface=self.display_surface,
+                                visible_area_size=20)
 
     def load_tile_images(self) -> None:
         self.tile_images = {
+            0: pygame.image.load("assets/images/tiles/wall_up_0.png").convert_alpha(),
             1: pygame.image.load("assets/images/tiles/floor_center_2.png").convert_alpha(),
             2: pygame.image.load("assets/images/tiles/ground.png").convert_alpha(),
-            3: pygame.image.load("assets/images/tiles/wall_up_0.png").convert_alpha(),
-            4: pygame.image.load("assets/images/tiles/wall_down_0.png").convert_alpha()
         }
         for key, image in self.tile_images.items():
             self.tile_images[key] = pygame.transform.scale(image, (
@@ -65,18 +73,15 @@ class Level:
         self.player.pos = pygame.Vector2(pixel_x, pixel_y)
 
     def draw_map(self) -> None:
-        tile_map = self.tile_map_generator.generate_tiles_map(
-            self.player.pos.x // self.config.tile_size,
-            self.player.pos.y // self.config.tile_size,
-            int(self.config.window_width / self.config.tile_size) // 2 + 2,
-            int(self.config.window_height / self.config.tile_size) // 2 + 2)
-
-        for (x, y), tile in tile_map.items():
+        visible_tiles = self.tile_map_generator.get_visible_tiles()
+        for tile in visible_tiles:
             tile_id = tile.tile_id
             if tile_id in self.tile_images:
                 tile_image = self.tile_images[tile_id]
-                tile_x = (x * self.config.tile_size + self.config.tile_size / 2) - self.player.pos.x + self.config.window_width // 2
-                tile_y = (y * self.config.tile_size + self.config.tile_size / 2) - self.player.pos.y + self.config.window_height // 2
+                tile_x = ((tile.pos.x * self.config.tile_size + self.config.tile_size / 2)
+                          - self.player.pos.x + self.config.window_width // 2)
+                tile_y = ((tile.pos.y * self.config.tile_size + self.config.tile_size / 2)
+                          - self.player.pos.y + self.config.window_height // 2)
                 self.display_surface.blit(tile_image, (tile_x, tile_y))
                 if self.config.debug_level == 3 or self.config.debug_level == 4:
                     pygame.draw.rect(self.display_surface, Color.DARK_BLUE,
@@ -85,13 +90,15 @@ class Level:
                                       self.config.tile_size,
                                       self.config.tile_size), 1)
             else:
-                pygame.draw.rect(self.display_surface, Color.BLACK,
-                                 (x * self.config.tile_size, y * self.config.tile_size, self.config.tile_size,
+                pygame.draw.rect(self.display_surface, Color.WHITE,
+                                 (tile.pos.x * self.config.tile_size, tile.pos.y * self.config.tile_size,
+                                  self.config.tile_size,
                                   self.config.tile_size))
 
     def draw(self) -> None:
         self.draw_map()
         self.all_sprites.shifted_draw(self.player)
+        # self.mini_map.draw()
 
     def update(self, dt) -> None:
         self.player.update(dt)
@@ -108,18 +115,23 @@ class Level:
         return Vector2(tile_x, tile_y)
 
     def check_tile_collision(self, entity):
-        entity_rect = entity.collide_rect
-        for (x, y), tile in self.tile_map_generator.tiles_map.items():
-            if tile.tile_id == 2:
-                tile_rect = pygame.Rect(x * self.config.tile_size + self.config.tile_size / 2,
-                                        y * self.config.tile_size + self.config.tile_size / 2,
-                                        self.config.tile_size,
-                                        self.config.tile_size)
-                if entity_rect.colliderect(tile_rect):
-                    direction = self.get_collision_direction(entity_rect, tile_rect)
-                    entity.collide_with(tile_rect, direction)
+        entity_tile_pos = self.get_tile_position(entity.pos)
+        for dy in range(-1, 2):
+            for dx in range(-1, 2):
+                x, y = entity_tile_pos.x + dx, entity_tile_pos.y + dy
+                if (x, y) in self.tile_map_generator.tiles_map:
+                    tile = self.tile_map_generator.tiles_map[(x, y)]
+                    if tile.tile_id == 2 or tile.tile_id == 0:
+                        tile_rect = pygame.Rect(x * self.config.tile_size + self.config.tile_size / 2,
+                                                y * self.config.tile_size + self.config.tile_size / 2,
+                                                self.config.tile_size,
+                                                self.config.tile_size)
+                        if entity.collide_rect.colliderect(tile_rect):
+                            direction = self.get_collision_direction(entity.collide_rect, tile_rect)
+                            entity.collide_with(tile_rect, direction)
 
-    def get_collision_direction(self, entity_rect, tile_rect):
+    @staticmethod
+    def get_collision_direction(entity_rect, tile_rect):
         dx_center = entity_rect.centerx - tile_rect.centerx
         dy_center = entity_rect.centery - tile_rect.centery
         if abs(dx_center) > abs(dy_center):

@@ -1,6 +1,3 @@
-import yaml
-
-
 class GameData:
     """Singleton class for game data."""
 
@@ -19,6 +16,8 @@ class GameData:
     tile_scale: int = 4  # Scale of the tiles
     tile_image_size: int = 16  # Size of the tile images
     tile_size: int = tile_image_size * tile_scale  # Size of the tiles
+
+    map_size = 50
 
     player_speed: int = 100  # Speed of the player
     player_name: str = "&eChiroYuki"  # Name of the player
