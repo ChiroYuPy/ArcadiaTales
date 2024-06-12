@@ -29,7 +29,7 @@ To install and run Arcadia Tales, follow these steps:
 
 1. **Clone the Repository:**
     ```bash
-    git clone https://github.com/yourusername/arcadia-tales.git
+    git clone https://github.com/ChiroYuPy/ArcadiaTales
     cd arcadia-tales
     ```
 
