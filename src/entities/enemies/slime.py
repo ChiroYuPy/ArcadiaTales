@@ -1,6 +1,6 @@
 import random
 
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 from src.entities.enemies.enemy import Enemy
 
 

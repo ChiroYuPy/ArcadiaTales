@@ -1,12 +1,12 @@
 import pygame
 from pygame import Vector2
 from pyqtree import Index
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 from src.entities.enemies.slime import Slime
 from src.entities.player import Player
 from src.map.camera import Camera
-from src.map.minimap import MiniMap
-from src.map.tilemap import NoiseTileMapGenerator
+from src.map.mini_map import MiniMap
+from src.map.tile_map import NoiseTileMapGenerator
 from src.utils.colors import Color
 from src.utils.utils import Direction
 

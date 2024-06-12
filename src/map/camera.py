@@ -3,7 +3,7 @@ from pygame import Vector2
 from pygame.sprite import Group
 from pygame.freetype import Font
 
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 from src.utils.colors import Color
 from src.utils.utils import draw_formatted_message, format_text
 

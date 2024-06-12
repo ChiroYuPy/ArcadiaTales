@@ -4,7 +4,7 @@ import pygame
 from pygame.math import Vector2
 from pygame.sprite import Sprite
 
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 from src.utils.utils import Direction
 
 

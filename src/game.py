@@ -1,9 +1,9 @@
 import pygame
 from pygame.time import Clock
 
-from src.config.gamedata import GameData
-from src.chat.chatcore import ChatCore
-from src.chat.chatui import ChatUI
+from src.config.game_data import GameData
+from src.chat.chat_core import ChatCore
+from src.chat.chat_ui import ChatUI
 from src.map.level import Level
 from src.overlay import Overlay
 

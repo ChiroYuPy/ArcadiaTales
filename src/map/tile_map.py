@@ -1,7 +1,7 @@
 from perlin_noise import PerlinNoise
 from pygame import Vector2
 
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 
 config = GameData()
 

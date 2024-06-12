@@ -1,6 +1,6 @@
 from enum import Enum
 
-from src.config.gamedata import GameData
+from src.config.game_data import GameData
 from src.chat.commands import Commands
 
 

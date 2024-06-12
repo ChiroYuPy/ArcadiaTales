@@ -1,4 +1,4 @@
-from src.chat.chatcommands import Command, CommandGroup, Chat
+from src.chat.chat_commands import Command, CommandGroup, Chat
 import traceback
 
 

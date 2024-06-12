@@ -2,8 +2,8 @@ import pygame
 from pygame import Vector2
 from pygame.key import get_pressed
 
-from src.config.gamedata import GameData
-from src.entities.animatedentity import AnimatedEntity
+from src.config.game_data import GameData
+from src.entities.animated_entity import AnimatedEntity
 
 
 class Player(AnimatedEntity):
