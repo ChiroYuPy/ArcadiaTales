@@ -1,4 +1,4 @@
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.entities.enemies.enemy import Enemy
 
 

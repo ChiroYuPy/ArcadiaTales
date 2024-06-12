@@ -1,10 +1,16 @@
 from perlin_noise import PerlinNoise
+from pygame import Vector2, Rect
+
+from src.config.gamedata import GameData
+
+config = GameData()
 
 
 class Tile:
-    def __init__(self, tile_id, variant):
+    def __init__(self, tile_id, x, y, variant=1):
         self.tile_id = tile_id
         self.variant = variant
+        self.pos = Vector2(x, y)
 
 
 class NoiseTileMapGenerator:
@@ -24,9 +30,9 @@ class NoiseTileMapGenerator:
 
         noise_value = self.noise([x / self.scale, y / self.scale])
         if noise_value > 0:
-            tile = Tile(1, 1)
+            tile = Tile(1, x, y)
         else:
-            tile = Tile(2, 1)
+            tile = Tile(2, x, y)
 
         self.generated_tiles[(x, y)] = tile
         return tile

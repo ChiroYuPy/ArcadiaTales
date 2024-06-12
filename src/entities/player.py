@@ -2,9 +2,8 @@ import pygame
 from pygame import Vector2
 from pygame.key import get_pressed
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.entities.animatedentity import AnimatedEntity
-from src.entities.enemies.slime import Slime
 
 
 class Player(AnimatedEntity):
@@ -35,6 +34,10 @@ class Player(AnimatedEntity):
             self.direction = Vector2(keys[right] - keys[left], keys[down] - keys[up])
         else:
             self.direction = Vector2()
+
+    def collide_with(self, tile_rect, direction):
+        print("Player collide with an tile")
+        super().collide_with(tile_rect, direction)
 
     def update_animation_state(self):
         self.animation_direction = "right" if self.direction.x > 0 else \

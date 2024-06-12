@@ -1,7 +1,7 @@
 import pygame
 import pygame.freetype
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.utils.utils import format_text, draw_formatted_message
 
 

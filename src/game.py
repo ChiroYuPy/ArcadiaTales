@@ -1,7 +1,7 @@
 import pygame
 from pygame import Clock
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.chat.chatcore import ChatCore
 from src.chat.chatui import ChatUI
 from src.map.level import Level
@@ -12,6 +12,7 @@ class Game:
     def __init__(self):
         self.running = True
         self.config = GameData()
+        self.config.load_config()
         self.display_surface = pygame.display.set_mode(
             (self.config.window_width, self.config.window_height),
             pygame.NOFRAME if not self.config.window_frame else False | pygame.RESIZABLE if self.config.window_resizable else False)
@@ -21,6 +22,9 @@ class Game:
         self.overlay = Overlay(self)
         self.chat = ChatCore()
         self.chat_ui = ChatUI(self.chat)
+        self.startup()
+
+    def startup(self):
         self.chat.show_message("&bWelcome &7to the chat system!")
         self.chat.show_message("&7Use &bt &7to open the Chat")
         self.chat_ui.update_surfaces()
@@ -35,7 +39,7 @@ class Game:
         for event in pygame.event.get():
             # TODO: Do you know match / case ? You should split thins function into smaller pieces
             if event.type == pygame.QUIT:
-                self.running = False
+                self.quit_game()
             elif event.type == pygame.VIDEORESIZE:
                 self.config.window_width, self.config.window_height = event.size
                 self.display_surface = pygame.display.set_mode(event.size, pygame.RESIZABLE)
@@ -49,9 +53,15 @@ class Game:
                     if self.config.Chat.chat_open:
                         self.config.Chat.chat_open = False
                     else:
-                        self.running = False
+                        self.quit_game()
                 if event.key == pygame.K_F3:
-                    self.config.debug = not self.config.debug
+                    self.config.debug_level += 1
+                    if self.config.debug_level > 4:
+                        self.config.debug_level = 0
+
+    def quit_game(self):
+        self.config.save_config()
+        self.running = False
 
     def update(self):
         dt = self.clock.tick(self.config.max_fps) / 1000

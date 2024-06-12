@@ -1,9 +1,18 @@
+from enum import Enum
 from os import walk
 from typing import List, Tuple
 
 import pygame
+from pygame import Vector2
 
 from src.utils.colors import colors
+
+
+class Direction(Enum):
+    UP = Vector2(0, -1)
+    DOWN = Vector2(0, 1)
+    LEFT = Vector2(-1, 0)
+    RIGHT = Vector2(1, 0)
 
 
 def format_text(line: str) -> List[Tuple[str, Tuple[int, int, int]]]:
@@ -52,6 +61,7 @@ def format_text(line: str) -> List[Tuple[str, Tuple[int, int, int]]]:
 def draw_formatted_message(font, surface, formatted_message, pos):
     x, y = pos
     for text, color in formatted_message:
+        print(color)
         font.render_to(surface, (x, y), text, color)
         x += font.get_rect(text)[2]
 

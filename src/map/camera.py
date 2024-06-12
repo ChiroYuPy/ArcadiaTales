@@ -2,7 +2,7 @@ import pygame
 from pygame import Vector2
 from pygame.sprite import Group
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 
 
 class Camera(Group):
@@ -12,7 +12,7 @@ class Camera(Group):
         self.display_surface = pygame.display.get_surface()
         self.offset = Vector2()
 
-    def customize_draw(self, player):
+    def shifted_draw(self, player):
         self.offset = player.pos - Vector2(self.config.window_width / 2, self.config.window_height / 2)
         sprites_sorted = sorted(self.sprites(), key=lambda sprite: sprite.pos.y)
         for sprite in sprites_sorted:
@@ -25,7 +25,7 @@ class Camera(Group):
             centered_pos = Vector2(offset_pos.x - image_width / 2 + sprite.image_offset.x,
                                    offset_pos.y - image_height / 2 + sprite.image_offset.y)
             self.display_surface.blit(sprite.image, centered_pos)
-            if self.config.debug:
+            if self.config.debug_level == 2 or self.config.debug_level == 4:
                 self.draw_debug_squares(sprite, offset_pos, image_shape, hitbox_shape)
 
     def draw_debug_squares(self, sprite, offset_pos, image_shape, hitbox_shape):

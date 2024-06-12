@@ -1,6 +1,6 @@
 from pygame import Vector2
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.entities.animatedentity import AnimatedEntity
 
 

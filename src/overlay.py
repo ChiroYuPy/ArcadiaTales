@@ -1,6 +1,6 @@
 import pygame
 
-from gamedata import GameData
+from src.config.gamedata import GameData
 
 
 class Overlay:
@@ -20,7 +20,7 @@ class Overlay:
         ]
 
     def draw(self):
-        if self.config.debug:
+        if self.config.debug_level == 1 or self.config.debug_level == 4:
             self.update_texts()
             for i, text in enumerate(self.texts):
                 text_surf = self.f3_font.render(text, True, (255, 255, 255))

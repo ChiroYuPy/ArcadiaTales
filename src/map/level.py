@@ -1,10 +1,12 @@
 import pygame
 from pyqtree import Index
-from gamedata import GameData
+from src.config.gamedata import GameData
 from src.entities.enemies.slime import Slime
 from src.entities.player import Player
 from src.map.camera import Camera
 from src.map.tilemap import NoiseTileMapGenerator
+from src.utils.utils import Direction
+
 
 class Level:
     def __init__(self, game, clock) -> None:
@@ -70,6 +72,12 @@ class Level:
                 tile_x = (x * self.config.tile_size + self.config.tile_size / 2) - self.player.pos.x + self.config.window_width // 2
                 tile_y = (y * self.config.tile_size + self.config.tile_size / 2) - self.player.pos.y + self.config.window_height // 2
                 self.display_surface.blit(tile_image, (tile_x, tile_y))
+                if self.config.debug_level == 3 or self.config.debug_level == 4:
+                    pygame.draw.rect(self.display_surface, (255, 0, 0),
+                                     (tile_x,
+                                      tile_y,
+                                      self.config.tile_size,
+                                      self.config.tile_size), 1)
             else:
                 pygame.draw.rect(self.display_surface, (255, 127, 160),
                                  (x * self.config.tile_size, y * self.config.tile_size, self.config.tile_size,
@@ -77,18 +85,38 @@ class Level:
 
     def draw(self) -> None:
         self.draw_map()
-        self.all_sprites.customize_draw(self.player)
+        self.all_sprites.shifted_draw(self.player)
 
     def update(self, dt) -> None:
         self.player.update(dt)
+        self.check_tile_collision(self.player)
         for enemy in self.enemies:
             enemy.update(dt)
 
-        self.check_collisions(self.player)
+        self.check_collision(self.player)
         for enemy in self.enemies:
-            self.check_collisions(enemy)
+            self.check_collision(enemy)
 
-    def check_collisions(self, entity) -> None:
+    def check_tile_collision(self, entity):
+        entity_rect = entity.collide_rect
+        for (x, y), tile in self.tile_map_generator.tiles_map.items():
+            if tile.tile_id == 2:
+                tile_rect = pygame.Rect(x * self.config.tile_size + 16,
+                                        y * self.config.tile_size + 16,
+                                        self.config.tile_size,
+                                        self.config.tile_size)
+                if entity_rect.colliderect(tile_rect):
+                    direction = self.get_collision_direction(entity_rect, tile_rect)
+                    entity.collide_with(tile_rect, direction)
+
+    def get_collision_direction(self, entity_rect, tile_rect):
+        dx_center = entity_rect.centerx - tile_rect.centerx
+        dy_center = entity_rect.centery - tile_rect.centery
+        if abs(dx_center) > abs(dy_center):
+            return Direction.RIGHT if dx_center > 0 else Direction.LEFT
+        return Direction.DOWN if dy_center > 0 else Direction.UP
+
+    def check_collision(self, entity) -> None:
         entity_collisions = self.quadtree.intersect(entity.collide_rect)
         for other_entity in entity_collisions:
             if other_entity != entity and entity.collide_rect.colliderect(other_entity.collide_rect):
