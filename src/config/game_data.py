@@ -8,8 +8,8 @@ class GameData:
     window_frame: bool = True  # Whether to display window frame
     window_resizable: bool = True  # Whether the window is resizable
     window_caption: str = "ArcadiaTales"  # Caption for the game window
-    game_version: str = "0.1.2"  # Version of the game
-    max_fps: int = 600  # Maximum frames per second
+    game_version: str = "0.1.3"  # Version of the game
+    max_fps: int = 240  # Maximum frames per second
     debug_level: int = 0  # Debug level
     # ( 0 = False, 1 = infos, 2 = sprite_collide_rects, 3 = tile_collide_rects, 4 = all)
 
@@ -17,7 +17,13 @@ class GameData:
     tile_image_size: int = 16  # Size of the tile images
     tile_size: int = tile_image_size * tile_scale  # Size of the tiles
 
-    map_size = 50
+    map_size = 50  # Size of the map ( in tiles )
+    noise_map_seed = -1  # Seed for the noise map
+    noise_map_octaves = 4  # Octaves for the noise map
+    noise_map_scale = 50  # Scale for the noise map
+    noise_map_floor = -0.1  # Floor for the noise map
+
+    entities_generator_seed = 0  # Seed for the entities generator
 
     show_player_inventory: bool = False  # Whether to show the player's inventory
     player_speed: int = 100  # Speed of the player
@@ -27,10 +33,9 @@ class GameData:
     player_attack_damage: int = 10  # Attack damage of the player
     player_inventory_slot_width: int = 8  # Width of the player's inventory
     player_inventory_slot_height: int = 10  # Height of the player's inventory
-    player_inventory_slot_size: int = 32  # Size of the player's inventory slots
-    player_inventory_slot_spacing: int = 2  # Spacing between player's inventory slots
+    player_inventory_slot_size: int = 64  # Size of the player's inventory slots
     player_inventory_slot_image: str = "assets/images/gui/slot.png"  # Image for player's inventory slots
-    player_inventory_slot_scale: float = 2  # Scale of the player's inventory slots
+    player_inventory_slot_scale: float = 4  # Scale of the player's inventory slots
 
     slime_speed: int = 60  # Speed of the slime enemy
     slime_health: int = 20  # Health of the slime enemy

@@ -5,7 +5,7 @@ from src.overlays.health_bar import HealthBar
 class AliveEntity(AnimatedEntity):
     def __init__(self, group, pos, animations, image_offset=(0, 0), name_offset=(0, 0)):
         super().__init__(group, pos, animations, image_offset, name_offset)
-        self.health = 9
+        self.health = 10
         self.max_health = 10
         self.attack = 10
         self.defense = 10

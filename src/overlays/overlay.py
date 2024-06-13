@@ -19,14 +19,14 @@ class Overlay:
 
     def update_texts(self):
         player_pixel_pos = self.game.level.player.pos
-        player_tile_pos = self.game.level.get_tile_position(self.game.level.player.pos)
+        player_tile_pos = self.game.level.tile_map_generator.get_tile_position(self.game.level.player.pos)
         new_texts = [
             f'Player Pixel Position: ({int(player_pixel_pos.x)}, {int(player_pixel_pos.y)})',
             f'Player Tile Position: ({int(player_tile_pos.x)}, {int(player_tile_pos.y)})',
             f'FPS: {int(self.clock.get_fps())}',
             f'Player Speed: {self.config.player_speed}',
             f'Player Health: {self.config.player_health}',
-            f'Entities number: {len(self.game.level.enemies)+1}',
+            f'Entities number: {len(self.game.level.entity_manager.enemies)+1}',
         ]
 
         if new_texts != self.previous_texts:

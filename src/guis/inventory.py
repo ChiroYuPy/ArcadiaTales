@@ -1,4 +1,4 @@
-from src.guis.items import TileItem, ITEMS
+from src.guis.tile_item import TileItem, ITEMS
 
 
 class Inventory:

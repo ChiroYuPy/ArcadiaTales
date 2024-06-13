@@ -1,8 +1,8 @@
-from src.entities.entity import Entity
-from src.guis.items import ITEMS
+from src.entities.graphic_entity import GraphicEntity
+from src.guis.tile_item import ITEMS
 
 
-class DroppedItem(Entity):
+class DroppedItem(GraphicEntity):
     def __init__(self, item_id):
         super().__init__(group=None, pos=(0, 0))
         self.name = ITEMS[item_id]["display_name"]

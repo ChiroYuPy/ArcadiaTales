@@ -97,9 +97,7 @@ class Teleport(Command):
 
         x, y = map(int, argument)
 
-        self.chat.game.level.player.fall()
-        self.chat.game.level.player.pos.x = x * self.chat.game.config.tile_size
-        self.chat.game.level.player.pos.y = y * self.chat.game.config.tile_size
+        self.chat.game.level.player.fall((x * self.chat.game.config.tile_size, y * self.chat.game.config.tile_size))
 
         self.chat.send_message(f"Teleported to ({x}, {y}).")
 
@@ -126,7 +124,7 @@ class Summon(Command):
 
         entity_name, x, y = argument[0], int(argument[1]), int(argument[2])
 
-        self.chat.game.level.spawn_entity(entity_name, (x, y))
+        self.chat.game.level.entity_manager.spawn_entity(entity_name, (x, y))
 
         self.chat.send_message(f"Summoned {entity_name} at ({x}, {y}).")
 

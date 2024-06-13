@@ -15,12 +15,14 @@ class Player(AliveEntity):
                          animations={'up_walk': [], 'down_walk': [], 'left_walk': [], 'right_walk': [],
                                      'right_idle': [], 'left_idle': [], 'up_idle': [], 'down_idle': [],
                                      'right_atk': [], 'left_atk': [], 'up_atk': [], 'down_atk': [],
-                                     'fall': []},
+                                     'fall': [], 'emerge': []},
                          image_offset=(0, - 10),
                          name_offset=(0, - 16))
         self.health_bar.offset.y = 12
         self.health_bar.width = 80
         self.health_bar.height = 10
+
+        self.teleport_pos = (0, 0)
 
         self.name = self.config.player_name
         self.assets_name = "player"
@@ -73,14 +75,19 @@ class Player(AliveEntity):
             self.animation_speed = 6
         self.current_animation = self.animation_direction + "_" + self.animation_state
 
-    def fall(self):
+    def fall(self, pos):
         self.current_animation = "fall"
-        self.animation_speed = -20
+        self.animation_speed = 16
         self.current_frame = 0
+        self.teleport_pos = pos
 
     def update(self, dt):
         if self.current_animation == "fall":
             if self.current_frame >= len(self.animations["fall"]) - 1:
+                self.current_animation = "emerge"
+                self.pos = self.teleport_pos
+        elif self.current_animation == "emerge":
+            if self.current_frame >= len(self.animations["emerge"]) - 1:
                 self.current_animation = "down_idle"
         else:
             self.input()

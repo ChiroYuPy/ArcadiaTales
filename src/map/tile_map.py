@@ -21,22 +21,21 @@ class NoiseTileMapGenerator:
         self.config = GameData()
         self.tiles_map = {}
 
-        self.seed = -1
-        self.octaves = 4
-        self.scale = 50
-
-        random.seed(self.seed)
-        self.noise = PerlinNoise(octaves=4, seed=-1)
+        self.noise = PerlinNoise(octaves=self.config.noise_map_octaves, seed=self.config.noise_map_seed)
 
     def generate_tile(self, x, y):
-        noise_value = self.noise([x / self.scale, y / self.scale])
-        if noise_value > 0:
+        noise_value = self.noise([x / self.config.noise_map_scale, y / self.config.noise_map_scale])
+        if noise_value > self.config.noise_map_floor:
             tile = Tile(1, x, y, int(random.randint(1, 3)))
         else:
             tile = Tile(2, x, y)
         return tile
 
-    def generate_tiles_map(self, origin_x, origin_y, w, h):
+    def generate_tiles_map(self, origin_x, origin_y, w, h, wall_tiles_id=None, floor_tiles_id=None):
+        if floor_tiles_id is None:
+            floor_tiles_id = []
+        if wall_tiles_id is None:
+            wall_tiles_id = []
         self.tiles_map = {}
         if not self.tiles_map:
             for y in range(int(origin_y - h / 2), int(origin_y + h / 2)):
