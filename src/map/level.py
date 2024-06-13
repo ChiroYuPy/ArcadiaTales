@@ -1,3 +1,5 @@
+import math
+
 import pygame
 from pygame import Vector2
 from pyqtree import Index
@@ -22,11 +24,18 @@ class Level:
         self.all_sprites = Camera()
         self.player = Player(group=self.all_sprites, pos=(-6, -16))
         self.inventory_ui = InventoryUI(self.player.inventory)
-        self.enemies = [Slime(group=self.all_sprites, pos=(x * 2, 0)) for x in range(10)]
-        names = ("&4Gertrude", "&cGerald", "&7Geraldine", "&8Geraldina", "&5Geraldino", "&9Geraldinio")
-        for x, slime in enumerate(self.enemies):
+        self.uis = [self.inventory_ui]
+        self.enemies = []
+        names = ("Gertrude", "Gerald", "Geraldine", "Geraldina", "Geraldino", "Geraldinio")
+        color = "&c"
+        for i in range(12):
+            angle = 2 * math.pi * i / 12
+            x = -6 + 4 * math.cos(angle)
+            y = -16 + 4 * math.sin(angle)
+            slime = Slime(group=self.all_sprites, pos=(x, y))
             slime.target = self.player
-            slime.name = names[x % len(names)]
+            slime.name = color + names[i % len(names)]
+            self.enemies.append(slime)
 
         bbox = (0, 0, self.config.window_width, self.config.window_height)
         self.quadtree = Index(bbox=bbox)
@@ -60,12 +69,12 @@ class Level:
             self.tile_images[key] = pygame.transform.scale(image, (
                 image.get_width() * self.config.tile_scale, image.get_height() * self.config.tile_scale))
 
-    def summon_entity(self, entity: str, pos: tuple[int, int]) -> bool:
+    def spawn_entity(self, entity: str, pos: tuple[int, int]) -> bool:
         if entity == "slime":
-            slime = Slime(group=self.all_sprites, pos=pos)
-            slime.target = self.player
-            self.enemies.append(slime)
-            self.quadtree.insert(item=slime, bbox=slime.collide_rect)
+            entity = Slime(group=self.all_sprites, pos=pos)
+            entity.target = self.player
+            self.enemies.append(entity)
+            self.quadtree.insert(item=entity, bbox=entity.collide_rect)
             return True
         return False
 
@@ -101,7 +110,8 @@ class Level:
         self.draw_map()
         self.all_sprites.shifted_draw(self.player)
         if self.config.show_player_inventory:
-            self.inventory_ui.draw()
+            for ui in self.uis:
+                ui.draw()
         # self.mini_map.draw()
 
     def update(self, dt) -> None:
@@ -114,7 +124,9 @@ class Level:
             self.check_collision(enemy)
 
     def handle_events(self, event) -> None:
-        self.inventory_ui.handle_events(event)
+        if self.config.show_player_inventory:
+            for ui in self.uis:
+                ui.handle_events(event)
 
     def get_tile_position(self, pixel_position):
         tile_x = pixel_position[0] // self.config.tile_size

@@ -76,3 +76,7 @@ def import_folder(path):
             surface_list.append(image_surf)
 
     return surface_list
+
+
+def load_and_scale_image(image_path, size):
+    return pygame.transform.scale(pygame.image.load(image_path), size)

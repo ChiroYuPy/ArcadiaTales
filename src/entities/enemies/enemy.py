@@ -1,10 +1,10 @@
 from pygame import Vector2
 
 from src.config.game_data import GameData
-from src.entities.animated_entity import AnimatedEntity
+from src.entities.alive_entity import AliveEntity
 
 
-class Enemy(AnimatedEntity):
+class Enemy(AliveEntity):
     def __init__(self, group, pos, animations, image_offset=(0, 0), name_offset=(0, 0)):
         self.config = GameData()
         super().__init__(group=group,

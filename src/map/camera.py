@@ -30,6 +30,16 @@ class Camera(Group):
                                    offset_pos.y - image_height / 2 + sprite.image_offset.y)
             self.display_surface.blit(sprite.image, centered_pos)
 
+            sprite.health_bar.get_surface()
+
+            # Draw health bar
+            health_bar_surface = sprite.health_bar.get_surface()  # Assuming health_bar has a get_surface method
+            health_bar_width = health_bar_surface.get_width()
+            health_bar_height = health_bar_surface.get_height()
+            health_bar_pos = (offset_pos.x - health_bar_width / 2 + sprite.health_bar.offset.x,
+                              offset_pos.y - health_bar_height / 2 - image_height / 2 + sprite.health_bar.offset.y)
+            self.display_surface.blit(health_bar_surface, health_bar_pos)
+
             if sprite.name:
                 formatted_message = format_text(sprite.name)
 

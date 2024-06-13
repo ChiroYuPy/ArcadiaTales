@@ -1,3 +1,5 @@
+import random
+
 from perlin_noise import PerlinNoise
 from pygame import Vector2
 
@@ -19,16 +21,17 @@ class NoiseTileMapGenerator:
         self.config = GameData()
         self.tiles_map = {}
 
-        self.seed = 0
+        self.seed = -1
         self.octaves = 4
         self.scale = 50
 
+        random.seed(self.seed)
         self.noise = PerlinNoise(octaves=4, seed=-1)
 
     def generate_tile(self, x, y):
         noise_value = self.noise([x / self.scale, y / self.scale])
         if noise_value > 0:
-            tile = Tile(1, x, y)
+            tile = Tile(1, x, y, int(random.randint(1, 3)))
         else:
             tile = Tile(2, x, y)
         return tile

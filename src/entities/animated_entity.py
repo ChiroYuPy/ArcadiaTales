@@ -33,8 +33,14 @@ class AnimatedEntity(Entity):
 
     def animate(self, dt):
         self.current_frame += self.animation_speed * dt
-        if self.current_frame >= len(self.animations[self.current_animation]):
-            self.current_frame = 0
+        if self.animation_speed < 0:  # If animation_speed is negative
+            if self.current_frame < 0:  # If current_frame is less than 0
+                self.current_frame = len(
+                    self.animations[self.current_animation]) - 1  # Set current_frame to the last frame
+        else:  # If animation_speed is positive
+            if self.current_frame >= len(
+                    self.animations[self.current_animation]):  # If current_frame is more than the number of frames
+                self.current_frame = 0  # Set current_frame to the first frame
         self.image = self.animations[self.current_animation][int(self.current_frame)]
 
     def update(self, dt):

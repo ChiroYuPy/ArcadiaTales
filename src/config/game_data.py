@@ -8,7 +8,7 @@ class GameData:
     window_frame: bool = True  # Whether to display window frame
     window_resizable: bool = True  # Whether the window is resizable
     window_caption: str = "ArcadiaTales"  # Caption for the game window
-    game_version: str = "0.1.1"  # Version of the game
+    game_version: str = "0.1.2"  # Version of the game
     max_fps: int = 600  # Maximum frames per second
     debug_level: int = 0  # Debug level
     # ( 0 = False, 1 = infos, 2 = sprite_collide_rects, 3 = tile_collide_rects, 4 = all)
@@ -25,14 +25,14 @@ class GameData:
     player_health: int = 100  # Health of the player
     player_max_health: int = 100  # Maximum health of the player
     player_attack_damage: int = 10  # Attack damage of the player
-    player_inventory_slot_width: int = 6  # Width of the player's inventory
-    player_inventory_slot_height: int = 12  # Height of the player's inventory
-    player_inventory_slot_size: int = 16  # Size of the player's inventory slots
+    player_inventory_slot_width: int = 8  # Width of the player's inventory
+    player_inventory_slot_height: int = 10  # Height of the player's inventory
+    player_inventory_slot_size: int = 32  # Size of the player's inventory slots
     player_inventory_slot_spacing: int = 2  # Spacing between player's inventory slots
     player_inventory_slot_image: str = "assets/images/gui/slot.png"  # Image for player's inventory slots
-    player_inventory_slot_scale: float = 4  # Scale of the player's inventory slots
+    player_inventory_slot_scale: float = 2  # Scale of the player's inventory slots
 
-    slime_speed: int = 50  # Speed of the slime enemy
+    slime_speed: int = 60  # Speed of the slime enemy
     slime_health: int = 20  # Health of the slime enemy
     slime_max_health: int = 20  # Maximum health of the slime enemy
     slime_attack_damage: int = 5  # Attack damage of the slime enemy

@@ -5,7 +5,7 @@ from src.config.game_data import GameData
 from src.chat.chat_core import ChatCore
 from src.chat.chat_ui import ChatUI
 from src.map.level import Level
-from src.overlay import Overlay
+from src.overlays.overlay import Overlay
 
 
 class Game:
@@ -51,20 +51,27 @@ class Game:
             self.chat_ui.handle_event(event)
         match event.key:
             case pygame.K_t:
-                self.hande_t_key()
+                if not self.config.Chat.chat_open:
+                    self.hande_t_key()
             case pygame.K_e:
-                self.config.show_player_inventory = not self.config.show_player_inventory
+                if not self.config.Chat.chat_open:
+                    self.handle_e_key()
             case pygame.K_ESCAPE:
                 self.handle_escape_key()
             case pygame.K_F3:
                 self.handle_f3_key()
 
     def hande_t_key(self):
-        if not self.config.Chat.chat_open:
-            self.config.Chat.chat_open = True
+        self.config.Chat.chat_open = True
+
+    def handle_e_key(self):
+        self.config.show_player_inventory = not self.config.show_player_inventory
+
 
     def handle_escape_key(self):
-        if self.config.Chat.chat_open:
+        if self.config.show_player_inventory:
+            self.config.show_player_inventory = False
+        elif self.config.Chat.chat_open:
             self.config.Chat.chat_open = False
         else:
             self.quit_game()
